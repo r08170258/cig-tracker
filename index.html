@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cig Tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#e8590c">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Cig Tracker</title>
+<style>
+:root{--bg:#f4f2ef;--card:#fff;--tx:#1d1b19;--mut:#7a746c;--acc:#e8590c;--acc2:#c2410c;--track:#e6e2dc;--ok:#2f9e44;--bad:#d9480f;--ln:#e2ded8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c}}
+:root[data-theme="dark"]{--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{max-width:520px;margin:0 auto;padding:14px 16px 90px}
+h2{font-size:15px;font-weight:600;margin:22px 0 8px}
+.tabs{display:flex;gap:6px;background:var(--track);padding:4px;border-radius:12px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--mut);padding:9px;border-radius:9px;font-size:15px;font-weight:600}
+.tabs button.on{background:var(--card);color:var(--tx)}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px}
+.big{width:100%;height:150px;border:0;border-radius:24px;background:var(--acc);color:#fff;font-size:26px;font-weight:700;transition:transform .08s;box-shadow:0 6px 0 var(--acc2)}
+.big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--acc2)}
+.row{display:flex;gap:10px;align-items:center}
+.ghost{border:1.5px solid var(--ln);background:var(--card);color:var(--tx);border-radius:14px;padding:0 14px;height:52px;font-size:15px;font-weight:600;white-space:nowrap}
+.stats{display:flex;gap:10px;margin:14px 0}
+.stat{flex:1;background:var(--card);border-radius:16px;padding:12px 14px}
+.stat b{display:block;font-size:30px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:13px;color:var(--mut)}
+.entry{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-bottom:1px solid var(--ln);font-size:16px}
+.entry:last-child{border:0}
+.entry small{color:var(--mut);font-size:13px}
+.empty{color:var(--mut);padding:14px 4px;font-size:15px}
+.seg{display:inline-flex;background:var(--track);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;color:var(--mut);padding:6px 14px;border-radius:8px;font-weight:600;font-size:14px}
+.seg button.on{background:var(--card);color:var(--tx)}
+.top{display:flex;justify-content:space-between;align-items:center}
+.trend{font-size:15px;line-height:1.5}
+.good{color:var(--ok);font-weight:600}.badc{color:var(--bad);font-weight:600}
+svg text{fill:var(--mut);font-size:10px;font-family:inherit}
+.day{padding:10px 0;border-bottom:1px solid var(--ln)}
+.day:last-child{border:0}
+.day .h{display:flex;justify-content:space-between;font-weight:600}
+.day .g{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.6}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:#2b2825;color:#fff;border-radius:14px;padding:12px 16px;display:none;gap:14px;align-items:center;z-index:5;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.toast button{border:0;background:none;color:#ffa66b;font-weight:700;font-size:15px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:9}
+.sheet{background:var(--card);width:100%;max-width:520px;margin:0 auto;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
+.sheet input,.sheet textarea{width:100%;font-size:18px;padding:11px;border-radius:12px;border:1.5px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit}
+.sheet textarea{font-size:12px;height:90px}
+.btns{display:flex;gap:10px;margin-top:18px}
+.btns button{flex:1;height:50px;border-radius:14px;border:0;font-size:16px;font-weight:700;background:var(--track);color:var(--tx)}
+.btns .pri{background:var(--acc);color:#fff}.btns .del{color:var(--bad)}
+.note{font-size:13px;color:var(--mut);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="tabs"><button id="t1" class="on" data-tab="today">Today</button><button id="t2" data-tab="hist">History</button></div>
+<main id="app"></main>
+<div class="toast" id="toast"><span id="tmsg"></span><button id="undo">Undo</button></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+var E=[],tab='today',range=7,lastId=null,toastT=null;
+try{E=JSON.parse(localStorage.getItem('cigs')||'[]')}catch(e){E=[]}
+function save(){try{localStorage.setItem('cigs',JSON.stringify(E))}catch(e){}}
+function nowL(){return Date.now()-new Date().getTimezoneOffset()*60000}
+function pad(n){return n<10?'0'+n:''+n}
+function key(t){return new Date(t).toISOString().slice(0,10)}
+function hm(t){var d=new Date(t),h=d.getUTCHours(),m=d.getUTCMinutes();return (h%12||12)+':'+pad(m)+' '+(h<12?'am':'pm')}
+function gap(ms){var m=Math.round(ms/60000);if(m<60)return m+'m';return Math.floor(m/60)+'h '+pad(m%60)+'m'}
+function sorted(){return E.slice().sort(function(a,b){return a.t-b.t})}
+function byDay(){var o={};sorted().forEach(function(e){(o[key(e.t)]=o[key(e.t)]||[]).push(e)});return o}
+function gapsOf(arr){var g=[];for(var i=1;i<arr.length;i++)g.push(arr[i].t-arr[i-1].t);return g}
+function avg(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
+function dayLabel(k){var d=new Date(k+'T00:00:00Z');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'})}
+function lastDays(n){var out=[],base=Date.parse(key(nowL())+'T00:00:00Z');for(var i=n-1;i>=0;i--)out.push(new Date(base-i*864e5).toISOString().slice(0,10));return out}
+
+function log(){var e={id:Date.now()+''+Math.floor(Math.random()*99),t:nowL()};E.push(e);save();lastId=e.id;showToast('Logged ✓ '+hm(e.t));render()}
+function showToast(m){var t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.style.display='flex';clearTimeout(toastT);toastT=setTimeout(function(){t.style.display='none'},6000)}
+document.getElementById('undo').onclick=function(){E=E.filter(function(e){return e.id!==lastId});save();document.getElementById('toast').style.display='none';render()};
+
+function openEdit(id){
+  var e=id?E.filter(function(x){return x.id===id})[0]:null,t=e?e.t:nowL(),d=new Date(t).toISOString();
+  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">'+(e?'Edit cigarette':'Add an earlier cigarette')+'</h2><label>Date</label><input type="date" id="fd" value="'+d.slice(0,10)+'"><label>Time</label><input type="time" id="ft" value="'+d.slice(11,16)+'"><div class="btns">'+(e?'<button class="del" id="fdel">Delete</button>':'')+'<button id="fcan">Cancel</button><button class="pri" id="fsave">Save</button></div>';
+  document.getElementById('modal').style.display='flex';
+  document.getElementById('fcan').onclick=closeM;
+  if(e)document.getElementById('fdel').onclick=function(){E=E.filter(function(x){return x.id!==id});save();closeM();render()};
+  document.getElementById('fsave').onclick=function(){
+    var v=Date.parse(document.getElementById('fd').value+'T'+document.getElementById('ft').value+':00Z');
+    if(isNaN(v))return;
+    if(v>nowL()+60000){alert('That time is in the future. Pick a time that has already passed.');return}
+    if(e)e.t=v;else E.push({id:Date.now()+'x',t:v});
+    save();closeM();render()};
+}
+function closeM(){document.getElementById('modal').style.display='none'}
+document.getElementById('modal').onclick=function(ev){if(ev.target.id==='modal')closeM()};
+
+function openBackup(){
+  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">Backup and restore</h2><p class="note">Copy your data and paste it into Notes or a message to yourself. To restore, paste it below and tap Restore.</p><label>Backup text</label><textarea id="bk">'+JSON.stringify(E)+'</textarea><div class="btns"><button id="bcl">Close</button><button id="bcp">Copy</button><button class="pri" id="brs">Restore</button></div>';
+  document.getElementById('modal').style.display='flex';
+  document.getElementById('bcl').onclick=closeM;
+  document.getElementById('bcp').onclick=function(){var ta=document.getElementById('bk');ta.select();try{navigator.clipboard.writeText(ta.value)}catch(x){document.execCommand('copy')}this.textContent='Copied ✓'};
+  document.getElementById('brs').onclick=function(){try{var a=JSON.parse(document.getElementById('bk').value);if(!Array.isArray(a))throw 0;if(confirm('Replace current data with '+a.length+' entries?')){E=a.filter(function(x){return x&&typeof x.t==='number'}).map(function(x,i){return{id:x.id||('r'+i),t:x.t}});save();closeM();render()}}catch(x){alert('That text is not a valid backup.')}};
+}
+
+function bars(vals,labels,fmt,color){
+  var W=340,H=130,n=vals.length,mx=Math.max.apply(null,vals.map(function(v){return v||0}).concat([1])),bw=W/n,s='<svg viewBox="0 0 '+W+' '+(H+22)+'" width="100%">';
+  s+='<line x1="0" x2="'+W+'" y1="'+H+'" y2="'+H+'" stroke="var(--ln)"/>';
+  vals.forEach(function(v,i){
+    var x=i*bw+bw*.15,w=bw*.7;
+    if(v){var h=Math.max(3,v/mx*(H-16));s+='<rect x="'+x+'" y="'+(H-h)+'" width="'+w+'" height="'+h+'" rx="3" fill="'+color+'"/>';if(n<=7)s+='<text x="'+(x+w/2)+'" y="'+(H-h-4)+'" text-anchor="middle">'+fmt(v)+'</text>'}
+    if(n<=7||i%5===0||i===n-1)s+='<text x="'+(x+w/2)+'" y="'+(H+14)+'" text-anchor="middle">'+labels[i]+'</text>';
+  });
+  return s+'</svg>';
+}
+function arc(cx,cy,r1,r2,a1,a2){
+  function p(r,a){return (cx+r*Math.sin(a)).toFixed(1)+' '+(cy-r*Math.cos(a)).toFixed(1)}
+  return 'M'+p(r1,a1)+' L'+p(r2,a1)+' A'+r2+' '+r2+' 0 0 1 '+p(r2,a2)+' L'+p(r1,a2)+' A'+r1+' '+r1+' 0 0 0 '+p(r1,a1)+'Z';
+}
+function clock(days){
+  var c=new Array(24).fill(0),D=byDay();
+  days.forEach(function(k){(D[k]||[]).forEach(function(e){c[new Date(e.t).getUTCHours()]++})});
+  var mx=Math.max.apply(null,c.concat([1])),s='<svg viewBox="0 0 260 260" width="100%" style="max-width:300px;display:block;margin:0 auto">';
+  for(var h=0;h<24;h++){
+    var f=c[h]/mx,col=c[h]?'hsl('+(48-48*f).toFixed(0)+',95%,'+(62-14*f).toFixed(0)+'%)':'var(--track)';
+    s+='<path d="'+arc(130,130,52,100,h*Math.PI/12+.012,(h+1)*Math.PI/12-.012)+'" fill="'+col+'"><title>'+h+':00 – '+c[h]+' cigs</title></path>';
+  }
+  [[0,'12am'],[6,'6am'],[12,'12pm'],[18,'6pm']].forEach(function(l){var a=l[0]*Math.PI/12;s+='<text x="'+(130+116*Math.sin(a)).toFixed(1)+'" y="'+(134-116*Math.cos(a)).toFixed(1)+'" text-anchor="middle">'+l[1]+'</text>'});
+  var pk=c.indexOf(mx),tot=c.reduce(function(a,b){return a+b},0);
+  s+=tot?'<text x="130" y="126" text-anchor="middle" style="font-size:12px;fill:var(--mut)">busiest</text><text x="130" y="146" text-anchor="middle" style="font-size:16px;font-weight:700;fill:var(--tx)">'+hm(Date.UTC(2000,0,1,pk,0)).replace(':00','')+'</text>':'<text x="130" y="134" text-anchor="middle">no data yet</text>';
+  return s+'</svg>';
+}
+
+function viewToday(){
+  var D=byDay(),k=key(nowL()),arr=D[k]||[],g=gapsOf(arr),all=sorted(),last=all[all.length-1],h='';
+  h+='<button class="big" id="log">I had a cig</button>';
+  h+='<div class="row" style="margin-top:16px"><button class="ghost" id="add" style="flex:1">+ Add earlier cig</button><button class="ghost" id="bkp">Backup</button></div>';
+  h+='<div class="stats"><div class="stat"><b>'+arr.length+'</b><span>today</span></div><div class="stat"><b id="since">'+(last?gap(nowL()-last.t):'–')+'</b><span>since last cig</span></div></div>';
+  h+='<div class="card"><div class="top"><b>'+dayLabel(k)+'</b><span class="note">'+(g.length?'avg gap '+gap(avg(g)):'')+'</span></div>';
+  if(!arr.length)h+='<div class="empty">Nothing logged yet today. Tap the button after your next cigarette.</div>';
+  arr.slice().reverse().forEach(function(e,i){var idx=arr.length-1-i;
+    h+='<div class="entry" data-id="'+e.id+'"><span><b>'+hm(e.t)+'</b></span><small>'+(idx>0?'+'+gap(e.t-arr[idx-1].t)+' after previous':'first of the day')+' ›</small></div>'});
+  return h+'</div><p class="note">Tap any entry to edit its time or delete it. Days reset at midnight on your phone’s clock.</p><p class="note">Saved on this phone and works offline. Use Backup now and then as a safety copy.</p>';
+}
+function viewHist(){
+  var D=byDay(),days=lastDays(range),cnt=days.map(function(k){return (D[k]||[]).length}),
+  av=days.map(function(k){var g=gapsOf(D[k]||[]);return g.length?avg(g)/60000:0}),
+  labs=days.map(function(k){return +k.slice(8)}),h='';
+  function win(a,b){var ds=lastDays(a+b).slice(0,a),g=[],c=0,n=0;ds.forEach(function(k){var x=D[k]||[];g=g.concat(gapsOf(x));c+=x.length;if(x.length)n++});return{g:avg(g),c:n?c/n:null}}
+  var cur=win(range,0),prev=lastDays(range*2).slice(0,range),pg=[],pc=0,pn=0;
+  prev.forEach(function(k){var x=D[k]||[];pg=pg.concat(gapsOf(x));pc+=x.length;if(x.length)pn++});
+  var ca=avg(pg),cnow=cur.g,t='';
+  var cc=0,cn=0;days.forEach(function(k){var x=D[k]||[];cc+=x.length;if(x.length)cn++});
+  if(cnow&&ca){var p=Math.round((cnow-ca)/ca*100);t+='Average gap <span class="'+(p>=0?'good':'badc')+'">'+(p>=0?'up '+p+'% ↑':'down '+Math.abs(p)+'% ↓')+'</span> vs the previous '+range+' days.<br>'}
+  var pcAvg=pn?pc/pn:null,ccAvg=cn?cc/cn:null;
+  if(ccAvg&&pcAvg){var q=Math.round((ccAvg-pcAvg)/pcAvg*100);t+='Cigs per day <span class="'+(q<=0?'good':'badc')+'">'+(q<=0?'down '+Math.abs(q)+'% ↓':'up '+q+'% ↑')+'</span> ('+ccAvg.toFixed(1)+' vs '+pcAvg.toFixed(1)+').'}
+  if(!t)t='Trends appear once you have logged on a few different days.';
+  h+='<div class="top"><h2 style="margin:0">Trends</h2><div class="seg"><button data-r="7" class="'+(range===7?'on':'')+'">7 days</button><button data-r="30" class="'+(range===30?'on':'')+'">30 days</button></div></div>';
+  h+='<div class="card" style="margin-top:10px"><div class="trend">'+t+'</div></div>';
+  h+='<div class="card"><b>Cigs per day</b>'+bars(cnt,labs,function(v){return v},'var(--acc)')+'</div>';
+  h+='<div class="card"><b>Average gap per day</b> <span class="note">(minutes between cigs)</span>'+bars(av,labs,function(v){return gap(v*60000)},'#f59f00')+'</div>';
+  h+='<div class="card"><b>When you smoke</b> <span class="note">last '+range+' days, 24-hour clock</span>'+clock(days)+'<p class="note" style="text-align:center">Yellow = a few cigs, red = the busiest hours.</p></div>';
+  h+='<h2>Day by day</h2><div class="card">';
+  var ks=Object.keys(D).sort().reverse();
+  if(!ks.length)h+='<div class="empty">No entries yet.</div>';
+  ks.forEach(function(k){var a=D[k],g=gapsOf(a),line=a.map(function(e,i){return '<b>'+hm(e.t)+'</b>'+(i<g.length?' → '+gap(g[i])+' → ':'')}).join('');
+    h+='<div class="day"><div class="h"><span>'+dayLabel(k)+'</span><span>'+a.length+' cig'+(a.length>1?'s':'')+(g.length?' · avg gap '+gap(avg(g)):'')+'</span></div><div class="g">'+line+'</div></div>'});
+  return h+'</div>';
+}
+function render(){
+  document.getElementById('t1').className=tab==='today'?'on':'';document.getElementById('t2').className=tab==='hist'?'on':'';
+  document.getElementById('app').innerHTML=tab==='today'?viewToday():viewHist();
+}
+document.addEventListener('click',function(ev){
+  var el=ev.target.closest('button,.entry');if(!el)return;
+  if(el.dataset.tab){tab=el.dataset.tab;render();window.scrollTo(0,0)}
+  else if(el.id==='log')log();
+  else if(el.id==='add')openEdit(null);
+  else if(el.id==='bkp')openBackup();
+  else if(el.dataset.r){range=+el.dataset.r;render()}
+  else if(el.classList.contains('entry'))openEdit(el.dataset.id);
+});
+setInterval(function(){var s=document.getElementById('since');if(s){var a=sorted(),l=a[a.length-1];if(l)s.textContent=gap(nowL()-l.t)}},30000);
+render();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body>
+</html>
