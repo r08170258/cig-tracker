@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Cig Tracker">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#e8590c">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Cig Tracker</title>
 <style>
-:root{--bg:#f4f2ef;--card:#fff;--tx:#1d1b19;--mut:#7a746c;--acc:#e8590c;--acc2:#c2410c;--track:#e6e2dc;--ok:#2f9e44;--bad:#d9480f;--ln:#e2ded8;
+:root{--bg:#f4f2ef;--card:#fff;--tx:#1d1b19;--mut:#7a746c;--acc:#e8590c;--acc2:#c2410c;--gum:#2b8a3e;--gum2:#1b5e20;--body:#7048e8;--track:#e6e2dc;--ln:#e2ded8;--ok:#2f9e44;--bad:#d9480f;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c}}
-:root[data-theme="dark"]{--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c;--gum:#51cf66;--body:#b197fc}}
+:root[data-theme="dark"]{--bg:#171513;--card:#242120;--tx:#f1ede8;--mut:#9b948b;--track:#33302d;--ln:#35312e;--ok:#51cf66;--bad:#ff8a4c;--gum:#51cf66;--body:#b197fc}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -24,40 +24,49 @@ h2{font-size:15px;font-weight:600;margin:22px 0 8px}
 .tabs button{flex:1;border:0;background:none;color:var(--mut);padding:9px;border-radius:9px;font-size:15px;font-weight:600}
 .tabs button.on{background:var(--card);color:var(--tx)}
 .card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px}
-.big{width:100%;height:150px;border:0;border-radius:24px;background:var(--acc);color:#fff;font-size:26px;font-weight:700;transition:transform .08s;box-shadow:0 6px 0 var(--acc2)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{height:130px;border:0;border-radius:24px;background:var(--acc);color:#fff;font-size:20px;font-weight:700;transition:transform .08s;box-shadow:0 6px 0 var(--acc2);line-height:1.2}
+.big.g{background:var(--gum);box-shadow:0 6px 0 var(--gum2)}
 .big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--acc2)}
+.big.g:active{box-shadow:0 1px 0 var(--gum2)}
+.big small{display:block;font-size:13px;font-weight:500;opacity:.9;margin-top:4px}
 .row{display:flex;gap:10px;align-items:center}
-.ghost{border:1.5px solid var(--ln);background:var(--card);color:var(--tx);border-radius:14px;padding:0 14px;height:52px;font-size:15px;font-weight:600;white-space:nowrap}
-.stats{display:flex;gap:10px;margin:14px 0}
-.stat{flex:1;background:var(--card);border-radius:16px;padding:12px 14px}
-.stat b{display:block;font-size:30px;font-variant-numeric:tabular-nums;line-height:1.1}
-.stat span{font-size:13px;color:var(--mut)}
+.ghost{border:1.5px solid var(--ln);background:var(--card);color:var(--tx);border-radius:14px;padding:0 14px;height:50px;font-size:15px;font-weight:600;white-space:nowrap}
+.stats{display:flex;gap:10px;margin:14px 0 6px}
+.stat{flex:1;background:var(--card);border-radius:16px;padding:12px 10px}
+.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:12px;color:var(--mut)}
 .entry{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-bottom:1px solid var(--ln);font-size:16px}
 .entry:last-child{border:0}
 .entry small{color:var(--mut);font-size:13px}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px;margin-right:6px;color:#fff;background:var(--acc);vertical-align:middle}
+.tag.g{background:var(--gum)}
 .empty{color:var(--mut);padding:14px 4px;font-size:15px}
 .seg{display:inline-flex;background:var(--track);border-radius:10px;padding:3px}
 .seg button{border:0;background:none;color:var(--mut);padding:6px 14px;border-radius:8px;font-weight:600;font-size:14px}
 .seg button.on{background:var(--card);color:var(--tx)}
 .top{display:flex;justify-content:space-between;align-items:center}
-.trend{font-size:15px;line-height:1.5}
+.trend{font-size:15px;line-height:1.6}
 .good{color:var(--ok);font-weight:600}.badc{color:var(--bad);font-weight:600}
 svg text{fill:var(--mut);font-size:10px;font-family:inherit}
 .day{padding:10px 0;border-bottom:1px solid var(--ln)}
 .day:last-child{border:0}
-.day .h{display:flex;justify-content:space-between;font-weight:600}
+.day .h{display:flex;justify-content:space-between;font-weight:600;gap:8px}
 .day .g{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.6}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:#2b2825;color:#fff;border-radius:14px;padding:12px 16px;display:none;gap:14px;align-items:center;z-index:5;box-shadow:0 6px 24px rgba(0,0,0,.35)}
 .toast button{border:0;background:none;color:#ffa66b;font-weight:700;font-size:15px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:9}
 .sheet{background:var(--card);width:100%;max-width:520px;margin:0 auto;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
 .sheet label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
-.sheet input,.sheet textarea{width:100%;font-size:18px;padding:11px;border-radius:12px;border:1.5px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit}
-.sheet textarea{font-size:12px;height:90px}
+.sheet input,.sheet select,.sheet textarea{width:100%;font-size:18px;padding:11px;border-radius:12px;border:1.5px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit}
+.sheet textarea{font-size:12px;height:110px}
 .btns{display:flex;gap:10px;margin-top:18px}
 .btns button{flex:1;height:50px;border-radius:14px;border:0;font-size:16px;font-weight:700;background:var(--track);color:var(--tx)}
 .btns .pri{background:var(--acc);color:#fff}.btns .del{color:var(--bad)}
 .note{font-size:13px;color:var(--mut);line-height:1.5}
+.cfg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.cfg input{width:100%;font-size:16px;padding:9px;border-radius:10px;border:1.5px solid var(--ln);background:var(--bg);color:var(--tx)}
+.cfg label{font-size:12px;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -67,28 +76,37 @@ svg text{fill:var(--mut);font-size:10px;font-family:inherit}
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 
 <script>
-var E=[],tab='today',range=7,lastId=null,toastT=null;
+var E=[],CFG={cig:0.5,gum:2},tab='today',range=7,lastId=null,toastT=null,HL=2*3600000;
 try{E=JSON.parse(localStorage.getItem('cigs')||'[]')}catch(e){E=[]}
+try{var c0=JSON.parse(localStorage.getItem('nicoset')||'null');if(c0&&c0.cig&&c0.gum)CFG=c0}catch(e){}
 function save(){try{localStorage.setItem('cigs',JSON.stringify(E))}catch(e){}}
+function saveCfg(){try{localStorage.setItem('nicoset',JSON.stringify(CFG))}catch(e){}}
 function nowL(){return Date.now()-new Date().getTimezoneOffset()*60000}
 function pad(n){return n<10?'0'+n:''+n}
 function key(t){return new Date(t).toISOString().slice(0,10)}
+function addD(k,n){return new Date(Date.parse(k+'T00:00:00Z')+n*864e5).toISOString().slice(0,10)}
+function endOf(k){return Date.parse(k+'T00:00:00Z')+864e5-1}
 function hm(t){var d=new Date(t),h=d.getUTCHours(),m=d.getUTCMinutes();return (h%12||12)+':'+pad(m)+' '+(h<12?'am':'pm')}
 function gap(ms){var m=Math.round(ms/60000);if(m<60)return m+'m';return Math.floor(m/60)+'h '+pad(m%60)+'m'}
+function kindOf(e){return e.kind==='gum'?'gum':'cig'}
+function mgOf(e){return CFG[kindOf(e)]}
 function sorted(){return E.slice().sort(function(a,b){return a.t-b.t})}
 function byDay(){var o={};sorted().forEach(function(e){(o[key(e.t)]=o[key(e.t)]||[]).push(e)});return o}
-function gapsOf(arr){var g=[];for(var i=1;i<arr.length;i++)g.push(arr[i].t-arr[i-1].t);return g}
-function avg(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
-function dayLabel(k){var d=new Date(k+'T00:00:00Z');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'})}
-function lastDays(n){var out=[],base=Date.parse(key(nowL())+'T00:00:00Z');for(var i=n-1;i>=0;i--)out.push(new Date(base-i*864e5).toISOString().slice(0,10));return out}
+function gapsOf(a){var g=[];for(var i=1;i<a.length;i++)g.push(a[i].t-a[i-1].t);return g}
+function avg(a){var v=a.filter(function(x){return x!==null&&x!==undefined});return v.length?v.reduce(function(x,y){return x+y},0)/v.length:null}
+function bodyAt(T){var s=0;E.forEach(function(e){if(e.t<=T)s+=mgOf(e)*Math.pow(0.5,(T-e.t)/HL)});return s}
+function dayTotals(arr){var c=0,g=0,mg=0;arr.forEach(function(e){if(kindOf(e)==='gum')g++;else c++;mg+=mgOf(e)});return{c:c,g:g,mg:mg}}
+function dayLabel(k){return new Date(k+'T00:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'})}
+function lastDays(n,endK){var out=[];for(var i=n-1;i>=0;i--)out.push(addD(endK||key(nowL()),-i));return out}
+function f1(v){return v.toFixed(1)}
 
-function log(){var e={id:Date.now()+''+Math.floor(Math.random()*99),t:nowL()};E.push(e);save();lastId=e.id;showToast('Logged ✓ '+hm(e.t));render()}
-function showToast(m){var t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.style.display='flex';clearTimeout(toastT);toastT=setTimeout(function(){t.style.display='none'},6000)}
+function log(kind){var e={id:Date.now()+''+Math.floor(Math.random()*99),t:nowL(),kind:kind};E.push(e);save();lastId=e.id;toast((kind==='gum'?'Gum':'Cig')+' logged ✓ '+hm(e.t));render()}
+function toast(m){var t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.style.display='flex';clearTimeout(toastT);toastT=setTimeout(function(){t.style.display='none'},6000)}
 document.getElementById('undo').onclick=function(){E=E.filter(function(e){return e.id!==lastId});save();document.getElementById('toast').style.display='none';render()};
 
 function openEdit(id){
-  var e=id?E.filter(function(x){return x.id===id})[0]:null,t=e?e.t:nowL(),d=new Date(t).toISOString();
-  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">'+(e?'Edit cigarette':'Add an earlier cigarette')+'</h2><label>Date</label><input type="date" id="fd" value="'+d.slice(0,10)+'"><label>Time</label><input type="time" id="ft" value="'+d.slice(11,16)+'"><div class="btns">'+(e?'<button class="del" id="fdel">Delete</button>':'')+'<button id="fcan">Cancel</button><button class="pri" id="fsave">Save</button></div>';
+  var e=id?E.filter(function(x){return x.id===id})[0]:null,t=e?e.t:nowL(),d=new Date(t).toISOString(),kind=e?kindOf(e):'cig';
+  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">'+(e?'Edit entry':'Add an earlier one')+'</h2><label>Type</label><select id="fk"><option value="cig"'+(kind==='cig'?' selected':'')+'>Cigarette</option><option value="gum"'+(kind==='gum'?' selected':'')+'>Nicotex gum</option></select><label>Date</label><input type="date" id="fd" value="'+d.slice(0,10)+'"><label>Time</label><input type="time" id="ft" value="'+d.slice(11,16)+'"><div class="btns">'+(e?'<button class="del" id="fdel">Delete</button>':'')+'<button id="fcan">Cancel</button><button class="pri" id="fsave">Save</button></div>';
   document.getElementById('modal').style.display='flex';
   document.getElementById('fcan').onclick=closeM;
   if(e)document.getElementById('fdel').onclick=function(){E=E.filter(function(x){return x.id!==id});save();closeM();render()};
@@ -96,26 +114,48 @@ function openEdit(id){
     var v=Date.parse(document.getElementById('fd').value+'T'+document.getElementById('ft').value+':00Z');
     if(isNaN(v))return;
     if(v>nowL()+60000){alert('That time is in the future. Pick a time that has already passed.');return}
-    if(e)e.t=v;else E.push({id:Date.now()+'x',t:v});
+    var k=document.getElementById('fk').value;
+    if(e){e.t=v;e.kind=k}else E.push({id:Date.now()+'x',t:v,kind:k});
     save();closeM();render()};
 }
 function closeM(){document.getElementById('modal').style.display='none'}
 document.getElementById('modal').onclick=function(ev){if(ev.target.id==='modal')closeM()};
 
 function openBackup(){
-  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">Backup and restore</h2><p class="note">Copy your data and paste it into Notes or a message to yourself. To restore, paste it below and tap Restore.</p><label>Backup text</label><textarea id="bk">'+JSON.stringify(E)+'</textarea><div class="btns"><button id="bcl">Close</button><button id="bcp">Copy</button><button class="pri" id="brs">Restore</button></div>';
+  document.getElementById('sheet').innerHTML='<h2 style="margin-top:0;font-size:18px">Backup and restore</h2><p class="note">Copy this into Notes now and then. To restore, paste a backup below and tap Restore.</p><label>Backup text</label><textarea id="bk">'+JSON.stringify({entries:E,nicotine:CFG}).replace(/</g,'&lt;')+'</textarea><div class="btns"><button id="bcl">Close</button><button id="bcp">Copy</button><button class="pri" id="brs">Restore</button></div>';
   document.getElementById('modal').style.display='flex';
   document.getElementById('bcl').onclick=closeM;
   document.getElementById('bcp').onclick=function(){var ta=document.getElementById('bk');ta.select();try{navigator.clipboard.writeText(ta.value)}catch(x){document.execCommand('copy')}this.textContent='Copied ✓'};
-  document.getElementById('brs').onclick=function(){try{var a=JSON.parse(document.getElementById('bk').value);if(!Array.isArray(a))throw 0;if(confirm('Replace current data with '+a.length+' entries?')){E=a.filter(function(x){return x&&typeof x.t==='number'}).map(function(x,i){return{id:x.id||('r'+i),t:x.t}});save();closeM();render()}}catch(x){alert('That text is not a valid backup.')}};
+  document.getElementById('brs').onclick=function(){
+    try{
+      var o=JSON.parse(document.getElementById('bk').value),arr=Array.isArray(o)?o:o.entries;
+      if(!Array.isArray(arr))throw 0;
+      if(confirm('Replace current data with '+arr.length+' entries?')){
+        E=arr.filter(function(x){return x&&typeof x.t==='number'}).map(function(x,i){return{id:x.id||('r'+i),t:x.t,kind:x.kind==='gum'?'gum':'cig'}});
+        if(o.nicotine&&o.nicotine.cig&&o.nicotine.gum){CFG=o.nicotine;saveCfg()}
+        save();closeM();render()}
+    }catch(x){alert('That text is not a valid backup.')}};
 }
 
-function bars(vals,labels,fmt,color){
-  var W=340,H=130,n=vals.length,mx=Math.max.apply(null,vals.map(function(v){return v||0}).concat([1])),bw=W/n,s='<svg viewBox="0 0 '+W+' '+(H+22)+'" width="100%">';
+function stacked(a,b,labels){
+  var W=340,H=130,n=a.length,mx=1,i;for(i=0;i<n;i++)mx=Math.max(mx,a[i]+b[i]);
+  var bw=W/n,s='<svg viewBox="0 0 '+W+' '+(H+22)+'" width="100%">';
+  s+='<line x1="0" x2="'+W+'" y1="'+H+'" y2="'+H+'" stroke="var(--ln)"/>';
+  for(i=0;i<n;i++){
+    var x=i*bw+bw*.15,w=bw*.7,hc=a[i]/mx*(H-16),hg=b[i]/mx*(H-16);
+    if(a[i])s+='<rect x="'+x+'" y="'+(H-hc)+'" width="'+w+'" height="'+hc+'" fill="var(--acc)"/>';
+    if(b[i])s+='<rect x="'+x+'" y="'+(H-hc-hg)+'" width="'+w+'" height="'+hg+'" rx="3" fill="var(--gum)"/>';
+    if(a[i]+b[i]&&n<=7)s+='<text x="'+(x+w/2)+'" y="'+(H-hc-hg-4)+'" text-anchor="middle">'+(a[i]+b[i])+'</text>';
+    if(n<=7||i%5===0)s+='<text x="'+(x+w/2)+'" y="'+(H+14)+'" text-anchor="middle">'+labels[i]+'</text>';
+  }
+  return s+'</svg>';
+}
+function bars(vals,labels,fmtF,color){
+  var W=340,H=130,n=vals.length,mx=Math.max.apply(null,vals.map(function(v){return v||0}).concat([0.01])),bw=W/n,s='<svg viewBox="0 0 '+W+' '+(H+22)+'" width="100%">';
   s+='<line x1="0" x2="'+W+'" y1="'+H+'" y2="'+H+'" stroke="var(--ln)"/>';
   vals.forEach(function(v,i){
     var x=i*bw+bw*.15,w=bw*.7;
-    if(v){var h=Math.max(3,v/mx*(H-16));s+='<rect x="'+x+'" y="'+(H-h)+'" width="'+w+'" height="'+h+'" rx="3" fill="'+color+'"/>';if(n<=7)s+='<text x="'+(x+w/2)+'" y="'+(H-h-4)+'" text-anchor="middle">'+fmt(v)+'</text>'}
+    if(v){var h=Math.max(3,v/mx*(H-16));s+='<rect x="'+x+'" y="'+(H-h)+'" width="'+w+'" height="'+h+'" rx="3" fill="'+color+'"/>';if(n<=7)s+='<text x="'+(x+w/2)+'" y="'+(H-h-4)+'" text-anchor="middle">'+fmtF(v)+'</text>'}
     if(n<=7||i%5===0||i===n-1)s+='<text x="'+(x+w/2)+'" y="'+(H+14)+'" text-anchor="middle">'+labels[i]+'</text>';
   });
   return s+'</svg>';
@@ -130,7 +170,7 @@ function clock(days){
   var mx=Math.max.apply(null,c.concat([1])),s='<svg viewBox="0 0 260 260" width="100%" style="max-width:300px;display:block;margin:0 auto">';
   for(var h=0;h<24;h++){
     var f=c[h]/mx,col=c[h]?'hsl('+(48-48*f).toFixed(0)+',95%,'+(62-14*f).toFixed(0)+'%)':'var(--track)';
-    s+='<path d="'+arc(130,130,52,100,h*Math.PI/12+.012,(h+1)*Math.PI/12-.012)+'" fill="'+col+'"><title>'+h+':00 – '+c[h]+' cigs</title></path>';
+    s+='<path d="'+arc(130,130,52,100,h*Math.PI/12+.012,(h+1)*Math.PI/12-.012)+'" fill="'+col+'"><title>'+h+':00 – '+c[h]+' items</title></path>';
   }
   [[0,'12am'],[6,'6am'],[12,'12pm'],[18,'6pm']].forEach(function(l){var a=l[0]*Math.PI/12;s+='<text x="'+(130+116*Math.sin(a)).toFixed(1)+'" y="'+(134-116*Math.cos(a)).toFixed(1)+'" text-anchor="middle">'+l[1]+'</text>'});
   var pk=c.indexOf(mx),tot=c.reduce(function(a,b){return a+b},0);
@@ -139,39 +179,44 @@ function clock(days){
 }
 
 function viewToday(){
-  var D=byDay(),k=key(nowL()),arr=D[k]||[],g=gapsOf(arr),all=sorted(),last=all[all.length-1],h='';
-  h+='<button class="big" id="log">I had a cig</button>';
-  h+='<div class="row" style="margin-top:16px"><button class="ghost" id="add" style="flex:1">+ Add earlier cig</button><button class="ghost" id="bkp">Backup</button></div>';
-  h+='<div class="stats"><div class="stat"><b>'+arr.length+'</b><span>today</span></div><div class="stat"><b id="since">'+(last?gap(nowL()-last.t):'–')+'</b><span>since last cig</span></div></div>';
-  h+='<div class="card"><div class="top"><b>'+dayLabel(k)+'</b><span class="note">'+(g.length?'avg gap '+gap(avg(g)):'')+'</span></div>';
-  if(!arr.length)h+='<div class="empty">Nothing logged yet today. Tap the button after your next cigarette.</div>';
-  arr.slice().reverse().forEach(function(e,i){var idx=arr.length-1-i;
-    h+='<div class="entry" data-id="'+e.id+'"><span><b>'+hm(e.t)+'</b></span><small>'+(idx>0?'+'+gap(e.t-arr[idx-1].t)+' after previous':'first of the day')+' ›</small></div>'});
-  return h+'</div><p class="note">Tap any entry to edit its time or delete it. Days reset at midnight on your phone’s clock.</p><p class="note">Saved on this phone and works offline. Use Backup now and then as a safety copy.</p>';
+  var now=nowL(),k=key(now),arr=byDay()[k]||[],t=dayTotals(arr),all=sorted(),last=all[all.length-1],h='';
+  h+='<div class="pair"><button class="big" id="logc">I had a cig<small>Classic Ultra Mild</small></button><button class="big g" id="logg">I had a gum<small>Nicotex 2 mg</small></button></div>';
+  h+='<div class="row" style="margin-top:12px"><button class="ghost" id="add" style="flex:1">+ Add earlier</button><button class="ghost" id="bkp">Backup</button></div>';
+  h+='<div class="stats"><div class="stat"><b>'+t.c+'</b><span>cigs today</span></div><div class="stat"><b>'+t.g+'</b><span>gums today</span></div><div class="stat"><b id="body">'+f1(bodyAt(now))+'</b><span>mg nicotine in body</span></div></div>';
+  h+='<div class="note" style="margin:0 0 10px">Time since last: <b id="since">'+(last?gap(now-last.t):'–')+'</b> · intake today '+f1(t.mg)+' mg</div>';
+  h+='<div class="card"><div class="top"><b>'+dayLabel(k)+'</b></div>';
+  if(!arr.length)h+='<div class="empty">Nothing logged yet today.</div>';
+  arr.slice().reverse().forEach(function(e,i){var idx=arr.length-1-i,kind=kindOf(e);
+    h+='<div class="entry" data-id="'+e.id+'"><span><span class="tag'+(kind==='gum'?' g':'')+'">'+(kind==='gum'?'GUM':'CIG')+'</span><b>'+hm(e.t)+'</b></span><small>'+(idx>0?'+'+gap(e.t-arr[idx-1].t)+' after previous':'first of the day')+' ›</small></div>'});
+  h+='</div>';
+  h+='<div class="card"><b>Nicotine per item</b><p class="note" style="margin:6px 0 0">Used to estimate the nicotine in your body, which halves about every 2 hours. These are estimates, so check your pack and gum label.</p><div class="cfg"><div><label>Cigarette (mg)</label><input type="number" step="0.1" id="cc" value="'+CFG.cig+'"></div><div><label>Gum (mg)</label><input type="number" step="0.1" id="cg" value="'+CFG.gum+'"></div></div><button class="ghost" id="cs" style="width:100%;margin-top:10px">Save nicotine settings</button></div>';
+  h+='<p class="note">Tap any entry to change its type, time or delete it. Days reset at midnight on your phone’s clock.</p>';
+  return h;
 }
 function viewHist(){
-  var D=byDay(),days=lastDays(range),cnt=days.map(function(k){return (D[k]||[]).length}),
-  av=days.map(function(k){var g=gapsOf(D[k]||[]);return g.length?avg(g)/60000:0}),
-  labs=days.map(function(k){return +k.slice(8)}),h='';
-  function win(a,b){var ds=lastDays(a+b).slice(0,a),g=[],c=0,n=0;ds.forEach(function(k){var x=D[k]||[];g=g.concat(gapsOf(x));c+=x.length;if(x.length)n++});return{g:avg(g),c:n?c/n:null}}
-  var cur=win(range,0),prev=lastDays(range*2).slice(0,range),pg=[],pc=0,pn=0;
-  prev.forEach(function(k){var x=D[k]||[];pg=pg.concat(gapsOf(x));pc+=x.length;if(x.length)pn++});
-  var ca=avg(pg),cnow=cur.g,t='';
-  var cc=0,cn=0;days.forEach(function(k){var x=D[k]||[];cc+=x.length;if(x.length)cn++});
-  if(cnow&&ca){var p=Math.round((cnow-ca)/ca*100);t+='Average gap <span class="'+(p>=0?'good':'badc')+'">'+(p>=0?'up '+p+'% ↑':'down '+Math.abs(p)+'% ↓')+'</span> vs the previous '+range+' days.<br>'}
-  var pcAvg=pn?pc/pn:null,ccAvg=cn?cc/cn:null;
-  if(ccAvg&&pcAvg){var q=Math.round((ccAvg-pcAvg)/pcAvg*100);t+='Cigs per day <span class="'+(q<=0?'good':'badc')+'">'+(q<=0?'down '+Math.abs(q)+'% ↓':'up '+q+'% ↑')+'</span> ('+ccAvg.toFixed(1)+' vs '+pcAvg.toFixed(1)+').'}
+  var today=key(nowL()),D=byDay(),days=lastDays(range,today),prevDays=lastDays(range,addD(today,-range)),h='';
+  function items(k){return (D[k]||[]).length}
+  function body(k){return bodyAt(endOf(k))}
+  function gapAvg(k){var g=gapsOf(D[k]||[]);return g.length?avg(g):null}
+  var cNow=avg(days.map(items)),cPrev=avg(prevDays.map(items));
+  var bNow=avg(days.map(body)),bPrev=avg(prevDays.map(body));
+  var gNow=avg(days.map(gapAvg)),gPrev=avg(prevDays.map(gapAvg));
+  var t='';
+  if(cNow!==null&&cPrev){var q=Math.round((cNow-cPrev)/cPrev*100);t+='Items per day <span class="'+(q<=0?'good':'badc')+'">'+(q<=0?'down '+Math.abs(q)+'% ↓':'up '+q+'% ↑')+'</span> ('+f1(cNow)+' vs '+f1(cPrev)+').<br>'}
+  if(bNow!==null&&bPrev){var p=Math.round((bNow-bPrev)/bPrev*100);t+='Nicotine in body at day end <span class="'+(p<=0?'good':'badc')+'">'+(p<=0?'down '+Math.abs(p)+'% ↓':'up '+p+'% ↑')+'</span> ('+f1(bNow)+' vs '+f1(bPrev)+' mg).<br>'}
+  if(gNow&&gPrev){var r=Math.round((gNow-gPrev)/gPrev*100);t+='Average gap between items <span class="'+(r>=0?'good':'badc')+'">'+(r>=0?'up '+r+'% ↑':'down '+Math.abs(r)+'% ↓')+'</span>.'}
   if(!t)t='Trends appear once you have logged on a few different days.';
   h+='<div class="top"><h2 style="margin:0">Trends</h2><div class="seg"><button data-r="7" class="'+(range===7?'on':'')+'">7 days</button><button data-r="30" class="'+(range===30?'on':'')+'">30 days</button></div></div>';
   h+='<div class="card" style="margin-top:10px"><div class="trend">'+t+'</div></div>';
-  h+='<div class="card"><b>Cigs per day</b>'+bars(cnt,labs,function(v){return v},'var(--acc)')+'</div>';
-  h+='<div class="card"><b>Average gap per day</b> <span class="note">(minutes between cigs)</span>'+bars(av,labs,function(v){return gap(v*60000)},'#f59f00')+'</div>';
-  h+='<div class="card"><b>When you smoke</b> <span class="note">last '+range+' days, 24-hour clock</span>'+clock(days)+'<p class="note" style="text-align:center">Yellow = a few cigs, red = the busiest hours.</p></div>';
+  h+='<div class="card"><b>Cigs and gums per day</b> <span class="note"><span style="color:var(--acc)">■</span> cigs <span style="color:var(--gum)">■</span> gums</span>'+stacked(days.map(function(k){return dayTotals(D[k]||[]).c}),days.map(function(k){return dayTotals(D[k]||[]).g}),days.map(function(k){return +k.slice(8)}))+'</div>';
+  h+='<div class="card"><b>Nicotine in body at end of each day</b> <span class="note">mg, estimate</span>'+bars(days.map(body),days.map(function(k){return +k.slice(8)}),f1,'var(--body)')+'</div>';
+  h+='<div class="card"><b>Nicotine taken per day</b> <span class="note">mg, cigs + gums</span>'+bars(days.map(function(k){return dayTotals(D[k]||[]).mg}),days.map(function(k){return +k.slice(8)}),f1,'var(--acc)')+'</div>';
+  h+='<div class="card"><b>When you use</b> <span class="note">last '+range+' days, 24-hour clock</span>'+clock(days)+'<p class="note" style="text-align:center">Yellow = a few, red = the busiest hours.</p></div>';
   h+='<h2>Day by day</h2><div class="card">';
   var ks=Object.keys(D).sort().reverse();
   if(!ks.length)h+='<div class="empty">No entries yet.</div>';
-  ks.forEach(function(k){var a=D[k],g=gapsOf(a),line=a.map(function(e,i){return '<b>'+hm(e.t)+'</b>'+(i<g.length?' → '+gap(g[i])+' → ':'')}).join('');
-    h+='<div class="day"><div class="h"><span>'+dayLabel(k)+'</span><span>'+a.length+' cig'+(a.length>1?'s':'')+(g.length?' · avg gap '+gap(avg(g)):'')+'</span></div><div class="g">'+line+'</div></div>'});
+  ks.forEach(function(k){var a=D[k],g=gapsOf(a),tt=dayTotals(a),line=a.map(function(e,i){return '<b>'+kindOf(e)+' '+hm(e.t)+'</b>'+(i<g.length?' → '+gap(g[i])+' → ':'')}).join('');
+    h+='<div class="day"><div class="h"><span>'+dayLabel(k)+'</span><span>'+tt.c+' cig'+(tt.c===1?'':'s')+' · '+tt.g+' gum'+(tt.g===1?'':'s')+'</span></div><div class="g">'+line+'</div><div class="g">Intake '+f1(tt.mg)+' mg · body at day end '+f1(body(k))+' mg</div></div>'});
   return h+'</div>';
 }
 function render(){
@@ -181,16 +226,20 @@ function render(){
 document.addEventListener('click',function(ev){
   var el=ev.target.closest('button,.entry');if(!el)return;
   if(el.dataset.tab){tab=el.dataset.tab;render();window.scrollTo(0,0)}
-  else if(el.id==='log')log();
+  else if(el.id==='logc')log('cig');
+  else if(el.id==='logg')log('gum');
   else if(el.id==='add')openEdit(null);
   else if(el.id==='bkp')openBackup();
+  else if(el.id==='cs'){var c=+document.getElementById('cc').value,g=+document.getElementById('cg').value;if(c>0&&g>0){CFG={cig:c,gum:g};saveCfg();render()}}
   else if(el.dataset.r){range=+el.dataset.r;render()}
   else if(el.classList.contains('entry'))openEdit(el.dataset.id);
 });
-setInterval(function(){var s=document.getElementById('since');if(s){var a=sorted(),l=a[a.length-1];if(l)s.textContent=gap(nowL()-l.t)}},30000);
+setInterval(function(){
+  var s=document.getElementById('since'),b=document.getElementById('body'),now=nowL(),l=sorted().slice(-1)[0];
+  if(s&&l)s.textContent=gap(now-l.t);
+  if(b)b.textContent=f1(bodyAt(now));
+},30000);
 render();
-try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
 </script>
 </body>
 </html>
